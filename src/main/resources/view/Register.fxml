@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+
+<StackPane fx:id="rootPane" prefHeight="500.0" prefWidth="400.0" styleClass="login-bg" stylesheets="@../styles/main.css"
+           xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.studyplatform.client.studyplatformclient.controller.RegisterController">
+
+    <AnchorPane fx:id="dinoHead" maxWidth="200" maxHeight="100" translateY="-230" onMouseClicked="#onEyeClicked">
+        <Circle fx:id="leftEye" fill="WHITE" layoutX="50.0" layoutY="50.0" radius="35.0" stroke="#cccccc" strokeWidth="2.0" />
+        <Circle fx:id="leftPupil" fill="#333333" layoutX="50.0" layoutY="50.0" radius="12.0" />
+
+        <Circle fx:id="rightEye" fill="WHITE" layoutX="150.0" layoutY="50.0" radius="35.0" stroke="#cccccc" strokeWidth="2.0" />
+        <Circle fx:id="rightPupil" fill="#333333" layoutX="150.0" layoutY="50.0" radius="12.0" />
+    </AnchorPane>
+
+    <VBox alignment="CENTER" maxWidth="320.0" maxHeight="400.0" spacing="15.0" styleClass="login-card">
+        <Label text="Create Account" textFill="#333333">
+            <font>
+                <Font name="System Bold" size="22.0" />
+            </font>
+        </Label>
+
+        <Label text="Join the study platform!" textFill="#888888" />
+
+        <TextField fx:id="nameField" promptText="Full Name" prefHeight="40"/>
+        <TextField fx:id="emailField" promptText="Email Address" prefHeight="40"/>
+        <PasswordField fx:id="passwordField" promptText="Password" prefHeight="40"/>
+
+        <Label fx:id="infoLabel" textFill="#ff4444" visible="false" wrapText="true"/>
+
+        <Button fx:id="registerButton" text="REGISTER" maxWidth="Infinity" prefHeight="40"
+                styleClass="button-primary" onAction="#onRegisterClick"/>
+
+        <Button text="Already have an account? Login"
+                styleClass="button-link" onAction="#onBackToLoginClick"/>
+    </VBox>
+
+    <Circle fill="WHITE" radius="30.0" translateX="-145" translateY="-190"/>
+    <ImageView fitWidth="70" fitHeight="70" translateX="-145" translateY="-190" rotate="135" scaleX="-1">
+        <image>
+            <Image url="@../images/paw.png"/>
+        </image>
+    </ImageView>
+
+    <Circle fill="WHITE" radius="30.0" translateX="145" translateY="-190"/>
+    <ImageView fitWidth="70" fitHeight="70" translateX="145" translateY="-190" rotate="-135">
+        <image>
+            <Image url="@../images/paw.png"/>
+        </image>
+    </ImageView>
+
+    <Circle fill="WHITE" radius="30.0" translateX="-145" translateY="190"/>
+    <ImageView fitWidth="70" fitHeight="70" translateX="-145" translateY="190" rotate="45" scaleX="-1">
+        <image>
+            <Image url="@../images/paw.png"/>
+        </image>
+    </ImageView>
+
+    <Circle fill="WHITE" radius="30.0" translateX="145" translateY="190"/>
+    <ImageView fitWidth="70" fitHeight="70" translateX="145" translateY="190" rotate="-45">
+        <image>
+            <Image url="@../images/paw.png"/>
+        </image>
+    </ImageView>
+
+</StackPane>
