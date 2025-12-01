@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane prefHeight="650.0" prefWidth="950.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.studyplatform.client.studyplatformclient.controller.DinoStoreController">
+    <center>
+        <VBox alignment="CENTER" spacing="20">
+            <Label text="Dino Store Screen">
+                <font><Font size="24.0"/></font>
+            </Label>
+            <Button text="Back to Dashboard" onAction="#onBackClick"/>
+        </VBox>
+    </center>
+</BorderPane>

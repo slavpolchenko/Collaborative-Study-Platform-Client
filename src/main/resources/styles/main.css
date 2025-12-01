@@ -7,7 +7,7 @@
 }
 
 .dashboard-bg {
-    -fx-background-image: url("/images/bg.jpg");
+    -fx-background-image: url("/images/bg.png");
     -fx-background-size: cover;
     -fx-background-position: center;
 }
@@ -59,16 +59,17 @@
 }
 
 .dashboard-header {
-    -fx-background-color: rgba(255, 255, 255, 0.95);
+    -fx-background-color: rgba(255, 255, 255, 0.9);
+    -fx-background-radius: 0 0 20 20;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 2);
-    -fx-padding: 10 20;
+    -fx-padding: 15 30;
     -fx-alignment: CENTER_LEFT;
 }
 
 .icon-button {
     -fx-background-color: transparent;
     -fx-cursor: hand;
-    -fx-padding: 5;
+    -fx-padding: 8;
 }
 
 .icon-button:hover {
@@ -77,48 +78,69 @@
 }
 
 .avatar-circle {
-    -fx-fill: #e0e0e0;
-    -fx-stroke: #cccccc;
-    -fx-stroke-width: 1;
+    -fx-fill: white;
+    -fx-stroke: #4facfe;
+    -fx-stroke-width: 2;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);
 }
 
 .dashboard-card {
-    -fx-background-color: rgba(255, 255, 255, 0.9);
-    -fx-background-radius: 15;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);
+    -fx-background-color: rgba(255, 255, 255, 0.85);
+    -fx-background-radius: 20;
+    -fx-border-color: transparent;
+    -fx-border-width: 2;
+    -fx-border-radius: 20;
     -fx-cursor: hand;
     -fx-alignment: CENTER;
     -fx-padding: 20;
-    -fx-min-width: 220;
-    -fx-min-height: 140;
+    -fx-min-width: 260;
+    -fx-min-height: 160;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);
 }
 
-.dashboard-card:hover {
+.card-blue:hover {
     -fx-background-color: white;
-    -fx-translate-y: -3;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 15, 0, 0, 5);
+    -fx-border-color: #4facfe;
+    -fx-translate-y: -5;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-effect: dropshadow(gaussian, rgba(79, 172, 254, 0.6), 20, 0, 0, 0);
 }
 
-.card-premium {
-    -fx-background-color: linear-gradient(to bottom right, #fffbf0, #fff5c4);
-    -fx-border-color: gold;
-    -fx-border-width: 2;
-    -fx-border-radius: 15;
+.card-orange:hover {
+    -fx-background-color: white;
+    -fx-border-color: #ffa502;
+    -fx-translate-y: -5;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-effect: dropshadow(gaussian, rgba(255, 165, 2, 0.6), 20, 0, 0, 0);
 }
 
-.card-premium:hover {
-    -fx-background-color: linear-gradient(to bottom right, #fff5c4, #ffeb3b);
-    -fx-translate-y: -3;
-    -fx-effect: dropshadow(three-pass-box, rgba(255, 215, 0, 0.4), 20, 0, 0, 5);
+.card-green:hover {
+    -fx-background-color: white;
+    -fx-border-color: #2ed573;
+    -fx-translate-y: -5;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-effect: dropshadow(gaussian, rgba(46, 213, 115, 0.6), 20, 0, 0, 0);
+}
+
+.card-purple:hover {
+    -fx-background-color: white;
+    -fx-border-color: #a55eea;
+    -fx-translate-y: -5;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-effect: dropshadow(gaussian, rgba(165, 94, 234, 0.6), 20, 0, 0, 0);
 }
 
 .card-title {
-    -fx-font-size: 18px;
+    -fx-font-size: 20px;
     -fx-font-weight: bold;
     -fx-text-fill: #2c3e50;
 }
 
 .card-desc {
-    -fx-font-size: 12px;
+    -fx-font-size: 13px;
     -fx-text-fill: #7f8c8d;
 }

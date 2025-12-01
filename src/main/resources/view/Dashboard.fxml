@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
@@ -13,6 +13,10 @@
 <?import javafx.scene.text.Font?>
 
 <BorderPane prefHeight="650.0" prefWidth="950.0" styleClass="dashboard-bg" stylesheets="@../styles/main.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.studyplatform.client.studyplatformclient.controller.DashboardController">
+
+    <center>
+        <Pane fx:id="backgroundPane" />
+    </center>
 
     <top>
         <HBox spacing="15.0" styleClass="dashboard-header" alignment="CENTER_LEFT">
@@ -23,7 +27,7 @@
                 </graphic>
             </Button>
 
-            <Label text="StudyPlatform" textFill="#2c3e50">
+            <Label text="DinOPlatform" textFill="#2c3e50">
                 <font>
                     <Font name="Segoe UI Bold" size="22.0" />
                 </font>
@@ -50,7 +54,7 @@
     </top>
 
     <center>
-        <VBox alignment="CENTER" spacing="30.0">
+        <VBox alignment="CENTER" spacing="30.0" pickOnBounds="false">
 
             <GridPane hgap="25" vgap="25" alignment="CENTER">
 
@@ -74,7 +78,7 @@
                     </graphic>
                 </Button>
 
-                <Button styleClass="dashboard-card" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                <Button styleClass="dashboard-card" onAction="#onTasksClick" GridPane.columnIndex="0" GridPane.rowIndex="1">
                     <graphic>
                         <VBox alignment="CENTER" spacing="10">
                             <SVGPath content="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2z" fill="#2ed573" scaleX="2" scaleY="2"/>
@@ -84,17 +88,7 @@
                     </graphic>
                 </Button>
 
-                <Button styleClass="dashboard-card" GridPane.columnIndex="0" GridPane.rowIndex="1">
-                    <graphic>
-                        <VBox alignment="CENTER" spacing="10">
-                            <SVGPath content="M15 1H9v2h6V1zm-4 13h2V8h-2v6zm8.03-6.61l1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42C16.07 4.74 14.12 4 12 4c-4.97 0-9 4.03-9 9s4.02 9 9 9 9-4.03 9-9c0-2.12-.74-4.07-1.97-5.61zM12 20c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z" fill="#ff4757" scaleX="2" scaleY="2"/>
-                            <Label text="Focus Timer" styleClass="card-title"/>
-                            <Label text="Pomodoro technique" styleClass="card-desc"/>
-                        </VBox>
-                    </graphic>
-                </Button>
-
-                <Button styleClass="dashboard-card" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                <Button styleClass="dashboard-card" onAction="#onDinoStoreClick" GridPane.columnIndex="1" GridPane.rowIndex="1">
                     <graphic>
                         <VBox alignment="CENTER" spacing="10">
                             <SVGPath content="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7 1.49 0 2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-1h1.5c1.49 0 2.7-1.21 2.7-2.7s-1.21-2.7-2.7-2.7z" fill="#a55eea" scaleX="2" scaleY="2"/>

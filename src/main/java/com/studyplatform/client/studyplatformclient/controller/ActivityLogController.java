@@ -1,40 +1,33 @@
 package com.studyplatform.client.studyplatformclient.controller;
 
-import com.studyplatform.client.studyplatformclient.ClientApplication;
-import com.studyplatform.client.studyplatformclient.model.User;
-import com.studyplatform.client.studyplatformclient.utils.UserSession;
+import com.studyplatform.client.studyplatformclient.service.ApiClient;
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
 import java.util.Random;
 
-public class DashboardController {
+public class ActivityLogController {
 
-    @FXML private Label userNameLabel;
-    @FXML private Circle avatarCircle;
+    @FXML private ListView<String> activityList;
     @FXML private Pane backgroundPane;
 
     private final Random random = new Random();
 
     @FXML
     public void initialize() {
-        User user = UserSession.getInstance().getUser();
-        if (user != null) {
-            userNameLabel.setText(user.getName());
-        }
         spawnPaws();
+        loadActivity();
     }
 
     private void spawnPaws() {
@@ -85,56 +78,31 @@ public class DashboardController {
         fadeIn.play();
     }
 
-    @FXML
-    protected void onSettingsClick() {
-        System.out.println("Settings clicked");
+    private void loadActivity() {
+        new Thread(() -> {
+            String json = ApiClient.getActivityLog();
+
+            Platform.runLater(() -> {
+                try {
+                    if (json.equals("[]") || json.isEmpty()) {
+                        activityList.getItems().add("No recent activity.");
+                    } else {
+                        activityList.getItems().add(json);
+                    }
+                } catch (Exception e) {
+                    activityList.getItems().add("Error loading activity.");
+                }
+            });
+        }).start();
     }
 
     @FXML
-    protected void onAvatarClick() {
-        System.out.println("Avatar clicked");
-    }
-
-    @FXML
-    protected void onGroupsClick() {
-        navigateTo("/view/Groups.fxml");
-    }
-
-    @FXML
-    protected void onActivityClick() {
-        navigateTo("/view/ActivityLog.fxml");
-    }
-
-    @FXML
-    protected void onTasksClick() {
-        navigateTo("/view/Tasks.fxml");
-    }
-
-    @FXML
-    protected void onDinoStoreClick() {
-        navigateTo("/view/DinoStore.fxml");
-    }
-
-    private void navigateTo(String fxmlPath) {
+    protected void onBackClick() {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxmlPath));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/Dashboard.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), 950, 650);
-            Stage stage = (Stage) userNameLabel.getScene().getWindow();
+            Stage stage = (Stage) activityList.getScene().getWindow();
             stage.setScene(scene);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @FXML
-    protected void onLogoutClick() {
-        UserSession.cleanUserSession();
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(ClientApplication.class.getResource("/view/Login.fxml"));
-            Scene scene = new Scene(fxmlLoader.load(), 400, 500);
-            Stage stage = (Stage) userNameLabel.getScene().getWindow();
-            stage.setScene(scene);
-            stage.centerOnScreen();
         } catch (IOException e) {
             e.printStackTrace();
         }
