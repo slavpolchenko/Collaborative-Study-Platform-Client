@@ -42,6 +42,7 @@ public class LoginController {
     @FXML
     public void initialize() {
         rootPane.setOnMouseMoved(this::moveEyes);
+        loginButton.setDefaultButton(true);
     }
 
     @FXML
@@ -90,7 +91,6 @@ public class LoginController {
 
     private void shakeHeadNo() {
         dinoHead.setTranslateX(0);
-
         TranslateTransition tt = new TranslateTransition(Duration.millis(50), dinoHead);
         tt.setFromX(0);
         tt.setToX(10);
@@ -185,7 +185,6 @@ public class LoginController {
 
                 if (success) {
                     playSuccessAnimation();
-
                     errorLabel.setText("Login Successful!");
                     errorLabel.setTextFill(Color.GREEN);
 
@@ -217,7 +216,7 @@ public class LoginController {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/Register.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), 400, 500);
-            Stage stage = (Stage) registerButton.getScene().getWindow();
+            Stage stage = (Stage) loginButton.getScene().getWindow();
             stage.setScene(scene);
         } catch (Exception e) {
             e.printStackTrace();

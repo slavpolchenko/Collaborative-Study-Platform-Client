@@ -69,20 +69,6 @@ public class ApiClient {
         return "[]";
     }
 
-    public static boolean joinGroup(Long userId, Long groupId) {
-        RequestBody body = RequestBody.create(new byte[0]);
-        Request request = new Request.Builder()
-                .url(BASE_URL + "/api/memberships/add?userId=" + userId + "&groupId=" + groupId)
-                .post(body)
-                .build();
-
-        try (Response response = client.newCall(request).execute()) {
-            return response.isSuccessful();
-        } catch (IOException e) {
-            return false;
-        }
-    }
-
     public static String getTasks(Long groupId) {
         Request request = new Request.Builder()
                 .url(BASE_URL + "/api/tasks/group/" + groupId)
@@ -97,25 +83,6 @@ public class ApiClient {
             e.printStackTrace();
         }
         return "[]";
-    }
-
-    public static boolean createTask(Long groupId, String title, String description, String deadline) {
-        String jsonInput = String.format(
-                "{\"title\": \"%s\", \"description\": \"%s\", \"deadline\": \"%s\"}",
-                title, description, deadline
-        );
-
-        RequestBody body = RequestBody.create(jsonInput, MediaType.get("application/json"));
-        Request request = new Request.Builder()
-                .url(BASE_URL + "/api/tasks/create?groupId=" + groupId)
-                .post(body)
-                .build();
-
-        try (Response response = client.newCall(request).execute()) {
-            return response.isSuccessful();
-        } catch (IOException e) {
-            return false;
-        }
     }
 
     public static String getActivityLog() {

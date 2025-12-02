@@ -5,7 +5,6 @@ import com.google.gson.reflect.TypeToken;
 import com.studyplatform.client.studyplatformclient.model.Task;
 import com.studyplatform.client.studyplatformclient.service.ApiClient;
 import javafx.animation.FadeTransition;
-import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -23,6 +22,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -36,6 +36,7 @@ public class TasksController {
     @FXML private Pane backgroundPane;
 
     private final Random random = new Random();
+    private final List<Image> pawImages = new ArrayList<>();
 
     @FXML
     public void initialize() {
@@ -43,74 +44,61 @@ public class TasksController {
         descColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
         deadlineColumn.setCellValueFactory(new PropertyValueFactory<>("deadline"));
 
+        loadPawImages();
         spawnPaws();
         loadTasks();
     }
 
-    private void spawnPaws() {
-        Image pawImage = new Image(getClass().getResourceAsStream("/images/paw.png"));
+    private void loadPawImages() {
+        try {
+            pawImages.add(new Image(getClass().getResourceAsStream("/images/paw.png")));
+        } catch (Exception e) {
+            System.out.println("Could not load paw images");
+        }
+    }
 
-        for (int i = 0; i < 12; i++) {
-            ImageView paw = new ImageView(pawImage);
+    private void spawnPaws() {
+        if (pawImages.isEmpty()) return;
+        for (int i = 0; i < 10; i++) {
+            Image randomImage = pawImages.get(random.nextInt(pawImages.size()));
+            ImageView paw = new ImageView(randomImage);
             paw.setFitWidth(40);
             paw.setFitHeight(40);
             paw.setOpacity(0.4);
             paw.setRotate(random.nextInt(360));
-
             placePawRandomly(paw);
-
-            paw.setOnMouseClicked(e -> handlePawClick(paw));
-
             backgroundPane.getChildren().add(paw);
         }
     }
 
     private void placePawRandomly(ImageView paw) {
-        double x = random.nextDouble() * 900;
-        double y = random.nextDouble() * 600;
-        paw.setLayoutX(x);
-        paw.setLayoutY(y);
-    }
-
-    private void handlePawClick(ImageView paw) {
-        FadeTransition fadeOut = new FadeTransition(Duration.millis(300), paw);
-        fadeOut.setFromValue(0.4);
-        fadeOut.setToValue(0.0);
-        fadeOut.setOnFinished(e -> {
-            paw.setVisible(false);
-
-            PauseTransition pause = new PauseTransition(Duration.seconds(10));
-            pause.setOnFinished(event -> respawnPaw(paw));
-            pause.play();
-        });
-        fadeOut.play();
-    }
-
-    private void respawnPaw(ImageView paw) {
-        placePawRandomly(paw);
-        paw.setVisible(true);
-        FadeTransition fadeIn = new FadeTransition(Duration.millis(500), paw);
-        fadeIn.setFromValue(0.0);
-        fadeIn.setToValue(0.4);
-        fadeIn.play();
+        paw.setLayoutX(random.nextDouble() * 900);
+        paw.setLayoutY(random.nextDouble() * 600);
     }
 
     private void loadTasks() {
         new Thread(() -> {
-            String json = ApiClient.getTasks(1L);
-
-            Platform.runLater(() -> {
-                try {
-                    Gson gson = new Gson();
-                    List<Task> taskList = gson.fromJson(json, new TypeToken<List<Task>>(){}.getType());
-                    if (taskList != null) {
-                        ObservableList<Task> data = FXCollections.observableArrayList(taskList);
-                        tasksTable.setItems(data);
+            try {
+                String json = ApiClient.getTasks(1L);
+                Platform.runLater(() -> {
+                    if (json != null && !json.equals("[]") && !json.isEmpty()) {
+                        try {
+                            Gson gson = new Gson();
+                            List<Task> taskList = gson.fromJson(json, new TypeToken<List<Task>>(){}.getType());
+                            ObservableList<Task> data = FXCollections.observableArrayList(taskList);
+                            tasksTable.setItems(data);
+                        } catch (Exception e) {
+                            System.out.println("Error parsing JSON");
+                        }
+                    } else {
+                        tasksTable.setItems(FXCollections.observableArrayList(
+                                new Task(1L, "Test Task", "This is a demo task", "2023-12-01")
+                        ));
                     }
-                } catch (Exception e) {
-                    System.out.println("Error parsing tasks");
-                }
-            });
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }).start();
     }
 
