@@ -26,12 +26,18 @@ public class ApiClient {
         try (Response response = client.newCall(request).execute()) {
             if (response.isSuccessful() && response.body() != null) {
                 String responseString = response.body().string();
-                User user = gson.fromJson(responseString, User.class);
-                UserSession.setSession(user);
+                if (!responseString.isEmpty()) {
+                    try {
+                        User user = gson.fromJson(responseString, User.class);
+                        UserSession.setSession(user);
+                        return true;
+                    } catch (Exception e) {
+                        System.out.println("User parsing error");
+                    }
+                }
                 return true;
-            } else {
-                return false;
             }
+            return false;
         } catch (IOException e) {
             return false;
         }
@@ -55,7 +61,7 @@ public class ApiClient {
 
     public static String getGroups() {
         Request request = new Request.Builder()
-                .url(BASE_URL + "/api/groups")
+                .url(BASE_URL + "/api/groups/all")
                 .get()
                 .build();
 

@@ -27,6 +27,7 @@ public class LoginController {
     @FXML private AnchorPane dinoHead;
     @FXML private TextField emailField;
     @FXML private PasswordField passwordField;
+    @FXML private TextField passwordTextField;
     @FXML private Label errorLabel;
     @FXML private Button loginButton;
     @FXML private Button registerButton;
@@ -46,6 +47,19 @@ public class LoginController {
     }
 
     @FXML
+    private void togglePasswordVisibility() {
+        if (passwordField.isVisible()) {
+            passwordTextField.setText(passwordField.getText());
+            passwordTextField.setVisible(true);
+            passwordField.setVisible(false);
+        } else {
+            passwordField.setText(passwordTextField.getText());
+            passwordField.setVisible(true);
+            passwordTextField.setVisible(false);
+        }
+    }
+
+    @FXML
     private void onEyeClicked(MouseEvent event) {
         blink();
         clickCount++;
@@ -54,21 +68,11 @@ public class LoginController {
         }
     }
 
-    private void playFocusAnimation() {
-        leftPupil.setTranslateX(0); leftPupil.setTranslateY(0);
-        rightPupil.setTranslateX(0); rightPupil.setTranslateY(0);
-
-        animateSquint(leftEye, 0.8);
-        animateSquint(rightEye, 0.8);
-    }
-
     private void playSuccessAnimation() {
         leftEye.setFill(Color.LIMEGREEN);
         rightEye.setFill(Color.LIMEGREEN);
-
         animateSquint(leftEye, 0.6);
         animateSquint(rightEye, 0.6);
-
         PauseTransition pause = new PauseTransition(Duration.millis(300));
         pause.setOnFinished(e -> animateWink(rightEye));
         pause.play();
@@ -78,12 +82,9 @@ public class LoginController {
         isAngry = true;
         leftEye.setFill(Color.RED);
         rightEye.setFill(Color.RED);
-
         leftEye.setScaleY(1.0);
         rightEye.setScaleY(1.0);
-
         shakeHeadNo();
-
         PauseTransition pause = new PauseTransition(Duration.seconds(2));
         pause.setOnFinished(e -> calmDown());
         pause.play();
@@ -93,7 +94,7 @@ public class LoginController {
         dinoHead.setTranslateX(0);
         TranslateTransition tt = new TranslateTransition(Duration.millis(50), dinoHead);
         tt.setFromX(0);
-        tt.setToX(10);
+        tt.setByX(10);
         tt.setCycleCount(6);
         tt.setAutoReverse(true);
         tt.play();
@@ -136,7 +137,6 @@ public class LoginController {
         clickCount = 0;
         leftEye.setFill(Color.WHITE);
         rightEye.setFill(Color.WHITE);
-
         ScaleTransition openLeft = new ScaleTransition(Duration.millis(200), leftEye); openLeft.setToY(1.0); openLeft.play();
         ScaleTransition openRight = new ScaleTransition(Duration.millis(200), rightEye); openRight.setToY(1.0); openRight.play();
     }
@@ -144,7 +144,6 @@ public class LoginController {
     private void moveEyes(MouseEvent event) {
         double centerX = rootPane.getWidth() / 2;
         double centerY = rootPane.getHeight() / 2 - 210;
-
         updatePupil(leftPupil, event.getX(), event.getY(), centerX - 50, centerY);
         updatePupil(rightPupil, event.getX(), event.getY(), centerX + 50, centerY);
     }
@@ -160,15 +159,14 @@ public class LoginController {
 
     @FXML
     protected void onLoginClick() {
-        playFocusAnimation();
-
         String email = emailField.getText();
-        String password = passwordField.getText();
+        String password = passwordField.isVisible() ? passwordField.getText() : passwordTextField.getText();
 
         if (email.isEmpty() || password.isEmpty()) {
             errorLabel.setText("Please fill in all fields!");
             errorLabel.setVisible(true);
             errorLabel.setTextFill(Color.RED);
+            becomeAngry();
             return;
         }
 
@@ -198,6 +196,8 @@ public class LoginController {
                             stage.centerOnScreen();
                         } catch (Exception ex) {
                             ex.printStackTrace();
+                            errorLabel.setText("Error loading Dashboard!");
+                            errorLabel.setTextFill(Color.RED);
                         }
                     });
                     delay.play();

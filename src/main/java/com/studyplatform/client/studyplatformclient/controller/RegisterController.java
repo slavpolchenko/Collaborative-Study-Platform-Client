@@ -38,7 +38,6 @@ public class RegisterController {
     @FXML private Circle leftEye;
     @FXML private Circle rightEye;
 
-    private int clickCount = 0;
     private boolean isAngry = false;
 
     @FXML
@@ -46,30 +45,35 @@ public class RegisterController {
         rootPane.setOnMouseMoved(this::moveEyes);
     }
 
-    @FXML
-    private void onEyeClicked(MouseEvent event) {
-        blink();
-        clickCount++;
-        if (clickCount >= 5 && !isAngry) {
-            becomeAngry();
-        }
-    }
-
-    private void playFocusAnimation() {
+    private void playWinkAnimation() {
         leftPupil.setTranslateX(0); leftPupil.setTranslateY(0);
         rightPupil.setTranslateX(0); rightPupil.setTranslateY(0);
-        animateSquint(leftEye, 0.8);
-        animateSquint(rightEye, 0.8);
-    }
-
-    private void playSuccessAnimation() {
         leftEye.setFill(Color.LIMEGREEN);
         rightEye.setFill(Color.LIMEGREEN);
-        animateSquint(leftEye, 0.6);
-        animateSquint(rightEye, 0.6);
-        PauseTransition pause = new PauseTransition(Duration.millis(300));
-        pause.setOnFinished(e -> animateWink(rightEye));
-        pause.play();
+        animateSquint(leftEye);
+        animateSquint(rightEye);
+        PauseTransition pauseBeforeWink = new PauseTransition(Duration.millis(300));
+        pauseBeforeWink.setOnFinished(e -> animateWink(rightEye));
+        pauseBeforeWink.play();
+        PauseTransition resetPause = new PauseTransition(Duration.seconds(2.5));
+        resetPause.setOnFinished(e -> calmDown());
+        resetPause.play();
+    }
+
+    private void animateWink(Circle target) {
+        ScaleTransition close = new ScaleTransition(Duration.millis(150), target);
+        close.setToY(0.1);
+        ScaleTransition open = new ScaleTransition(Duration.millis(150), target);
+        open.setToY(0.6);
+        new SequentialTransition(close, open).play();
+    }
+
+    private void animateSquint(Circle target) {
+        ScaleTransition st = new ScaleTransition(Duration.millis(200), target);
+        st.setFromY(1.0);
+        st.setToY(0.6);
+        st.setCycleCount(1);
+        st.play();
     }
 
     private void becomeAngry() {
@@ -86,50 +90,16 @@ public class RegisterController {
 
     private void shakeHeadNo() {
         dinoHead.setTranslateX(0);
-
         TranslateTransition tt = new TranslateTransition(Duration.millis(50), dinoHead);
         tt.setFromX(0);
-        tt.setToX(10);
+        tt.setByX(10);
         tt.setCycleCount(6);
         tt.setAutoReverse(true);
         tt.play();
     }
 
-    private void animateWink(Circle target) {
-        ScaleTransition close = new ScaleTransition(Duration.millis(150), target);
-        close.setToY(0.1);
-        ScaleTransition open = new ScaleTransition(Duration.millis(150), target);
-        open.setToY(0.6);
-        new SequentialTransition(close, open).play();
-    }
-
-    private void animateSquint(Circle target, double value) {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), target);
-        st.setFromY(1.0);
-        st.setToY(value);
-        st.setCycleCount(1);
-        st.play();
-    }
-
-    private void blink() {
-        animateBlinkFull(leftEye);
-        animateBlinkFull(rightEye);
-        animateBlinkFull(leftPupil);
-        animateBlinkFull(rightPupil);
-    }
-
-    private void animateBlinkFull(Circle target) {
-        ScaleTransition st = new ScaleTransition(Duration.millis(100), target);
-        st.setFromY(1.0);
-        st.setToY(0.1);
-        st.setAutoReverse(true);
-        st.setCycleCount(2);
-        st.play();
-    }
-
     private void calmDown() {
         isAngry = false;
-        clickCount = 0;
         leftEye.setFill(Color.WHITE);
         rightEye.setFill(Color.WHITE);
         ScaleTransition openLeft = new ScaleTransition(Duration.millis(200), leftEye); openLeft.setToY(1.0); openLeft.play();
@@ -154,8 +124,6 @@ public class RegisterController {
 
     @FXML
     protected void onRegisterClick() {
-        playFocusAnimation();
-
         String name = nameField.getText();
         String email = emailField.getText();
         String password = passwordField.getText();
@@ -164,6 +132,7 @@ public class RegisterController {
             infoLabel.setText("Please fill in all fields!");
             infoLabel.setTextFill(Color.RED);
             infoLabel.setVisible(true);
+            becomeAngry();
             return;
         }
 
@@ -178,12 +147,12 @@ public class RegisterController {
             Platform.runLater(() -> {
                 registerButton.setDisable(false);
                 if (success) {
-                    playSuccessAnimation();
+                    playWinkAnimation();
                     infoLabel.setText("Success! Please login.");
                     infoLabel.setTextFill(Color.GREEN);
                 } else {
                     becomeAngry();
-                    infoLabel.setText("Registration failed.");
+                    infoLabel.setText("Account already exists or error!");
                     infoLabel.setTextFill(Color.RED);
                 }
             });
