@@ -24,21 +24,25 @@ public class ApiClient {
                 .build();
 
         try (Response response = client.newCall(request).execute()) {
-            if (response.isSuccessful() && response.body() != null) {
+            if (!response.isSuccessful()) {
+                return false;
+            }
+
+            if (response.body() != null) {
                 String responseString = response.body().string();
-                if (!responseString.isEmpty()) {
-                    try {
-                        User user = gson.fromJson(responseString, User.class);
-                        UserSession.setSession(user);
-                        return true;
-                    } catch (Exception e) {
-                        System.out.println("User parsing error");
-                    }
+                if (responseString.isEmpty()) return false;
+
+                User user = gson.fromJson(responseString, User.class);
+
+                if (user == null || user.getEmail() == null) {
+                    return false;
                 }
+
+                UserSession.setSession(user);
                 return true;
             }
             return false;
-        } catch (IOException e) {
+        } catch (Exception e) {
             return false;
         }
     }
@@ -105,5 +109,24 @@ public class ApiClient {
             e.printStackTrace();
         }
         return "[]";
+    }
+
+    public static boolean createTask(Long groupId, String title, String description, String deadline) {
+        String jsonInput = String.format(
+                "{\"title\": \"%s\", \"description\": \"%s\", \"deadline\": \"%s\"}",
+                title, description, deadline
+        );
+
+        RequestBody body = RequestBody.create(jsonInput, MediaType.get("application/json"));
+        Request request = new Request.Builder()
+                .url(BASE_URL + "/api/tasks/create?groupId=" + groupId)
+                .post(body)
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            return response.isSuccessful();
+        } catch (IOException e) {
+            return false;
+        }
     }
 }

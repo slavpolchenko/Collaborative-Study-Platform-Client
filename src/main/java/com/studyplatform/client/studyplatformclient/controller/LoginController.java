@@ -9,6 +9,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -157,16 +158,22 @@ public class LoginController {
         pupil.setTranslateY(Math.sin(angle) * distance);
     }
 
+    private void showAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Login Error");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
     @FXML
     protected void onLoginClick() {
         String email = emailField.getText();
         String password = passwordField.isVisible() ? passwordField.getText() : passwordTextField.getText();
 
         if (email.isEmpty() || password.isEmpty()) {
-            errorLabel.setText("Please fill in all fields!");
-            errorLabel.setVisible(true);
-            errorLabel.setTextFill(Color.RED);
             becomeAngry();
+            showAlert("Please fill in all fields!");
             return;
         }
 
@@ -180,11 +187,10 @@ public class LoginController {
 
             Platform.runLater(() -> {
                 loginButton.setDisable(false);
+                errorLabel.setVisible(false);
 
                 if (success) {
                     playSuccessAnimation();
-                    errorLabel.setText("Login Successful!");
-                    errorLabel.setTextFill(Color.GREEN);
 
                     PauseTransition delay = new PauseTransition(Duration.seconds(1.5));
                     delay.setOnFinished(e -> {
@@ -196,16 +202,14 @@ public class LoginController {
                             stage.centerOnScreen();
                         } catch (Exception ex) {
                             ex.printStackTrace();
-                            errorLabel.setText("Error loading Dashboard!");
-                            errorLabel.setTextFill(Color.RED);
+                            showAlert("Error loading Dashboard!");
                         }
                     });
                     delay.play();
 
                 } else {
                     becomeAngry();
-                    errorLabel.setText("Invalid credentials!");
-                    errorLabel.setTextFill(Color.RED);
+                    showAlert("Invalid email or password. Please try again.");
                 }
             });
         }).start();

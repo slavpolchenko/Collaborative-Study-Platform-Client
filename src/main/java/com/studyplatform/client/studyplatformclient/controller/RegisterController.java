@@ -45,6 +45,11 @@ public class RegisterController {
         rootPane.setOnMouseMoved(this::moveEyes);
     }
 
+    @FXML
+    private void onEyeClicked(MouseEvent event) {
+        blink();
+    }
+
     private void playWinkAnimation() {
         leftPupil.setTranslateX(0); leftPupil.setTranslateY(0);
         rightPupil.setTranslateX(0); rightPupil.setTranslateY(0);
@@ -73,6 +78,22 @@ public class RegisterController {
         st.setFromY(1.0);
         st.setToY(0.6);
         st.setCycleCount(1);
+        st.play();
+    }
+
+    private void blink() {
+        animateBlinkFull(leftEye);
+        animateBlinkFull(rightEye);
+        animateBlinkFull(leftPupil);
+        animateBlinkFull(rightPupil);
+    }
+
+    private void animateBlinkFull(Circle target) {
+        ScaleTransition st = new ScaleTransition(Duration.millis(100), target);
+        st.setFromY(1.0);
+        st.setToY(0.1);
+        st.setAutoReverse(true);
+        st.setCycleCount(2);
         st.play();
     }
 

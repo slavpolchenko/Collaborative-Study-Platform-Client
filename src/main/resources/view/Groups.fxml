@@ -38,7 +38,7 @@
                     <Insets top="30" right="50" bottom="30" left="50"/>
                 </padding>
 
-                <TableView fx:id="groupsTable" VBox.vgrow="ALWAYS" style="-fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 2); -fx-opacity: 0.95;">
+                <TableView fx:id="groupsTable" VBox.vgrow="ALWAYS" style="-fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 2);">
                     <columns>
                         <TableColumn fx:id="idColumn" text="ID" prefWidth="50"/>
                         <TableColumn fx:id="nameColumn" text="Group Name" prefWidth="250"/>

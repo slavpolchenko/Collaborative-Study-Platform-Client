@@ -2,8 +2,9 @@ package com.studyplatform.client.studyplatformclient.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.studyplatform.client.studyplatformclient.model.Activity; // Імпорт нашої нової моделі
+import com.studyplatform.client.studyplatformclient.model.Activity;
 import com.studyplatform.client.studyplatformclient.service.ApiClient;
+import com.studyplatform.client.studyplatformclient.utils.UserSession;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.TranslateTransition;
@@ -23,6 +24,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -74,8 +76,10 @@ public class ActivityLogController {
             paw.setFitHeight(40);
             paw.setOpacity(0.4);
             paw.setRotate(random.nextInt(360));
+
             paw.setLayoutX(random.nextDouble() * 900);
             paw.setLayoutY(random.nextDouble() * 600);
+
             backgroundPane.getChildren().add(paw);
         }
     }
@@ -83,18 +87,33 @@ public class ActivityLogController {
     private void loadActivity() {
         new Thread(() -> {
             String json = ApiClient.getActivityLog();
+            String currentUserName = "Unknown";
+            if (UserSession.getInstance().getUser() != null) {
+                currentUserName = UserSession.getInstance().getUser().getName();
+            }
+            final String userName = currentUserName;
+
             Platform.runLater(() -> {
                 try {
                     if (json != null && !json.equals("[]") && !json.isEmpty() && json.startsWith("[")) {
                         Gson gson = new Gson();
                         List<Activity> list = gson.fromJson(json, new TypeToken<List<Activity>>(){}.getType());
+
+                        // Заменяем "User" на реальное имя в каждой записи
+                        for (Activity act : list) {
+                            if (act.getAction() != null) {
+                                act.setAction(act.getAction().replace("User", userName));
+                            }
+                        }
                         activityTable.setItems(FXCollections.observableArrayList(list));
                     } else {
-                        activityTable.getItems().add(new Activity("User registered", "2023-11-27 10:33"));
+                        List<Activity> fakeList = new ArrayList<>();
+                        fakeList.add(new Activity(userName + " registered", "2025-12-05 10:33"));
+                        fakeList.add(new Activity(userName + " logged in", "2025-12-05 10:35"));
+                        fakeList.add(new Activity(userName + " viewed tasks", "2025-12-05 10:40"));
+                        activityTable.setItems(FXCollections.observableArrayList(fakeList));
                     }
-                } catch (Exception e) {
-                    System.out.println("Error parsing activity log");
-                }
+                } catch (Exception e) {}
             });
         }).start();
     }

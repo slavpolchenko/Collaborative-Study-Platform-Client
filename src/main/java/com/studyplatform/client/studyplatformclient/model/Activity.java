@@ -10,5 +10,4 @@ import lombok.NoArgsConstructor;
 public class Activity {
     private String action;
     private String timestamp;
-    // Можна додати userId, якщо сервер його повертає
 }

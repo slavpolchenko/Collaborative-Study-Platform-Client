@@ -5,8 +5,6 @@ import com.google.gson.reflect.TypeToken;
 import com.studyplatform.client.studyplatformclient.model.Task;
 import com.studyplatform.client.studyplatformclient.service.ApiClient;
 import javafx.animation.FadeTransition;
-import javafx.animation.ParallelTransition;
-import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -48,7 +46,6 @@ public class TasksController {
 
         loadPawImages();
         spawnPaws();
-        animateTable();
         loadTasks();
     }
 
@@ -77,21 +74,6 @@ public class TasksController {
     private void placePawRandomly(ImageView paw) {
         paw.setLayoutX(random.nextDouble() * 900);
         paw.setLayoutY(random.nextDouble() * 600);
-    }
-
-    private void animateTable() {
-        tasksTable.setOpacity(0);
-        tasksTable.setTranslateY(20);
-
-        FadeTransition fade = new FadeTransition(Duration.millis(800), tasksTable);
-        fade.setFromValue(0);
-        fade.setToValue(1);
-
-        TranslateTransition move = new TranslateTransition(Duration.millis(800), tasksTable);
-        move.setFromY(20);
-        move.setToY(0);
-
-        new ParallelTransition(fade, move).play();
     }
 
     private void loadTasks() {
