@@ -7,7 +7,7 @@
 }
 
 .dashboard-bg {
-    -fx-background-image: url("../images/bg.jpg");
+    -fx-background-image: url("../images/bg.png");
     -fx-background-size: cover;
     -fx-background-position: center;
 }

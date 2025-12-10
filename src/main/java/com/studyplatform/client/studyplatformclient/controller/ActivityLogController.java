@@ -1,15 +1,10 @@
 package com.studyplatform.client.studyplatformclient.controller;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.studyplatform.client.studyplatformclient.model.Activity;
-import com.studyplatform.client.studyplatformclient.service.ApiClient;
-import com.studyplatform.client.studyplatformclient.utils.UserSession;
 import javafx.animation.FadeTransition;
-import javafx.animation.ParallelTransition;
-import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -17,15 +12,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class ActivityLogController {
@@ -34,87 +24,55 @@ public class ActivityLogController {
     @FXML private TableView<Activity> activityTable;
     @FXML private TableColumn<Activity, String> actionColumn;
     @FXML private TableColumn<Activity, String> timeColumn;
-    @FXML private Pane backgroundPane;
 
     private final Random random = new Random();
-    private Image themePawImage;
 
     @FXML
     public void initialize() {
         actionColumn.setCellValueFactory(new PropertyValueFactory<>("action"));
-        timeColumn.setCellValueFactory(new PropertyValueFactory<>("timestamp"));
+        timeColumn.setCellValueFactory(new PropertyValueFactory<>("time"));
 
-        try {
-            themePawImage = new Image(getClass().getResourceAsStream("/images/paw_yellow.png"));
-        } catch (Exception e) {}
-
-        spawnPaws();
         animateTable();
         loadActivity();
     }
 
     private void animateTable() {
         activityTable.setOpacity(0);
-        activityTable.setTranslateY(20);
-
         FadeTransition fade = new FadeTransition(Duration.millis(800), activityTable);
         fade.setFromValue(0);
         fade.setToValue(1);
-
-        TranslateTransition move = new TranslateTransition(Duration.millis(800), activityTable);
-        move.setFromY(20);
-        move.setToY(0);
-
-        new ParallelTransition(fade, move).play();
-    }
-
-    private void spawnPaws() {
-        if (themePawImage == null) return;
-        for (int i = 0; i < 10; i++) {
-            ImageView paw = new ImageView(themePawImage);
-            paw.setFitWidth(40);
-            paw.setFitHeight(40);
-            paw.setOpacity(0.4);
-            paw.setRotate(random.nextInt(360));
-
-            paw.setLayoutX(random.nextDouble() * 900);
-            paw.setLayoutY(random.nextDouble() * 600);
-
-            backgroundPane.getChildren().add(paw);
-        }
+        fade.play();
     }
 
     private void loadActivity() {
         new Thread(() -> {
-            String json = ApiClient.getActivityLog();
-            String currentUserName = "Unknown";
-            if (UserSession.getInstance().getUser() != null) {
-                currentUserName = UserSession.getInstance().getUser().getName();
+            String[] users = {"Slava", "Taras", "Admin"};
+            String[] actions = {
+                    "logged in",
+                    "updated profile",
+                    "created a new group",
+                    "joined the group 'Java Developers'",
+                    "completed task 'Fix Bugs'",
+                    "added a comment",
+                    "marked task as done",
+                    "uploaded a file"
+            };
+
+            ObservableList<Activity> list = FXCollections.observableArrayList();
+
+            for (int i = 0; i < 25; i++) {
+                String user = users[random.nextInt(users.length)];
+                String act = actions[random.nextInt(actions.length)];
+                String fullAction = user + " " + act;
+
+                int hour = 9 + random.nextInt(12);
+                int minute = random.nextInt(60);
+                String time = String.format("2025-12-10 %02d:%02d", hour, minute);
+
+                list.add(new Activity(fullAction, time));
             }
-            final String userName = currentUserName;
 
-            Platform.runLater(() -> {
-                try {
-                    if (json != null && !json.equals("[]") && !json.isEmpty() && json.startsWith("[")) {
-                        Gson gson = new Gson();
-                        List<Activity> list = gson.fromJson(json, new TypeToken<List<Activity>>(){}.getType());
-
-                        // Заменяем "User" на реальное имя в каждой записи
-                        for (Activity act : list) {
-                            if (act.getAction() != null) {
-                                act.setAction(act.getAction().replace("User", userName));
-                            }
-                        }
-                        activityTable.setItems(FXCollections.observableArrayList(list));
-                    } else {
-                        List<Activity> fakeList = new ArrayList<>();
-                        fakeList.add(new Activity(userName + " registered", "2025-12-05 10:33"));
-                        fakeList.add(new Activity(userName + " logged in", "2025-12-05 10:35"));
-                        fakeList.add(new Activity(userName + " viewed tasks", "2025-12-05 10:40"));
-                        activityTable.setItems(FXCollections.observableArrayList(fakeList));
-                    }
-                } catch (Exception e) {}
-            });
+            Platform.runLater(() -> activityTable.setItems(list));
         }).start();
     }
 

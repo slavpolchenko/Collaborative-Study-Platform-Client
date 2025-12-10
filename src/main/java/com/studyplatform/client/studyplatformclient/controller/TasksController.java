@@ -4,27 +4,18 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.studyplatform.client.studyplatformclient.model.Task;
 import com.studyplatform.client.studyplatformclient.service.ApiClient;
-import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.util.Duration;
-
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.Optional;
 
 public class TasksController {
 
@@ -33,84 +24,77 @@ public class TasksController {
     @FXML private TableColumn<Task, String> titleColumn;
     @FXML private TableColumn<Task, String> descColumn;
     @FXML private TableColumn<Task, String> deadlineColumn;
-    @FXML private Pane backgroundPane;
-
-    private final Random random = new Random();
-    private final List<Image> pawImages = new ArrayList<>();
 
     @FXML
     public void initialize() {
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
         descColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
         deadlineColumn.setCellValueFactory(new PropertyValueFactory<>("deadline"));
-
-        loadPawImages();
-        spawnPaws();
         loadTasks();
-    }
-
-    private void loadPawImages() {
-        try {
-            pawImages.add(new Image(getClass().getResourceAsStream("/images/paw.png")));
-        } catch (Exception e) {
-            System.out.println("Could not load paw images");
-        }
-    }
-
-    private void spawnPaws() {
-        if (pawImages.isEmpty()) return;
-        for (int i = 0; i < 10; i++) {
-            Image randomImage = pawImages.get(random.nextInt(pawImages.size()));
-            ImageView paw = new ImageView(randomImage);
-            paw.setFitWidth(40);
-            paw.setFitHeight(40);
-            paw.setOpacity(0.4);
-            paw.setRotate(random.nextInt(360));
-            placePawRandomly(paw);
-            backgroundPane.getChildren().add(paw);
-        }
-    }
-
-    private void placePawRandomly(ImageView paw) {
-        paw.setLayoutX(random.nextDouble() * 900);
-        paw.setLayoutY(random.nextDouble() * 600);
     }
 
     private void loadTasks() {
         new Thread(() -> {
-            try {
-                String json = ApiClient.getTasks(1L);
-                Platform.runLater(() -> {
-                    if (json != null && !json.equals("[]") && !json.isEmpty()) {
-                        try {
-                            Gson gson = new Gson();
-                            List<Task> taskList = gson.fromJson(json, new TypeToken<List<Task>>(){}.getType());
-                            ObservableList<Task> data = FXCollections.observableArrayList(taskList);
-                            tasksTable.setItems(data);
-                        } catch (Exception e) {
-                            System.out.println("Error parsing JSON");
-                        }
-                    } else {
-                        tasksTable.setItems(FXCollections.observableArrayList(
-                                new Task(1L, "Test Task", "This is a demo task", "2023-12-01")
-                        ));
+            String json = ApiClient.getTasks(1L);
+            Platform.runLater(() -> {
+                try {
+                    if (json != null && !json.equals("[]")) {
+                        List<Task> list = new Gson().fromJson(json, new TypeToken<List<Task>>(){}.getType());
+                        tasksTable.setItems(FXCollections.observableArrayList(list));
                     }
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+                } catch (Exception e) {}
+            });
         }).start();
+    }
+
+    @FXML
+    protected void onAddTaskClick() {
+        System.out.println("КНОПКА ADD TASK НАЖАТА!"); // ПРОВЕРКА
+
+        Dialog<Task> dialog = new Dialog<>();
+        dialog.setTitle("New Task");
+        dialog.setHeaderText("Add Task");
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        TextField tfTitle = new TextField(); tfTitle.setPromptText("Title");
+        TextField tfDesc = new TextField(); tfDesc.setPromptText("Description");
+        TextField tfDate = new TextField(); tfDate.setPromptText("2025-12-31");
+        dialog.getDialogPane().setContent(new VBox(10, new Label("Title:"), tfTitle, new Label("Desc:"), tfDesc, new Label("Date:"), tfDate));
+
+        dialog.setResultConverter(b -> b == ButtonType.OK ? new Task(null, tfTitle.getText(), tfDesc.getText(), tfDate.getText()) : null);
+
+        Optional<Task> res = dialog.showAndWait();
+        res.ifPresent(t -> {
+            new Thread(() -> {
+                if (ApiClient.createTask(1L, t.getTitle(), t.getDescription(), t.getDeadline())) {
+                    Platform.runLater(this::loadTasks);
+                }
+            }).start();
+        });
+    }
+
+    @FXML
+    protected void onMarkDoneClick() {
+        System.out.println("КНОПКА MARK DONE НАЖАТА!"); // ПРОВЕРКА
+        Task t = tasksTable.getSelectionModel().getSelectedItem();
+        if (t != null) {
+            t.setDescription(t.getDescription() + " [DONE]");
+            new Thread(() -> {
+                if (ApiClient.updateTask(t)) {
+                    Platform.runLater(() -> {
+                        new Alert(Alert.AlertType.INFORMATION, "Done!").show();
+                        loadTasks();
+                    });
+                }
+            }).start();
+        }
     }
 
     @FXML
     protected void onBackClick() {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/Dashboard.fxml"));
-            Scene scene = new Scene(fxmlLoader.load(), 950, 650);
             Stage stage = (Stage) backButton.getScene().getWindow();
-            stage.setScene(scene);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("/view/Dashboard.fxml")), 950, 650));
+        } catch (IOException e) {}
     }
 }

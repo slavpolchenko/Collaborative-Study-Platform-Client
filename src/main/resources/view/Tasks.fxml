@@ -17,9 +17,9 @@
 
     <top>
         <HBox alignment="CENTER_LEFT" spacing="20" styleClass="dashboard-header">
-            <Button fx:id="backButton" styleClass="icon-button" onAction="#onBackClick">
+            <Button onAction="#onBackClick" styleClass="icon-button" fx:id="backButton">
                 <graphic>
-                    <SVGPath content="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" fill="#555555" scaleX="1.5" scaleY="1.5"/>
+                    <SVGPath content="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" fill="#555555" scaleX="1.5" scaleY="1.5" />
                 </graphic>
             </Button>
             <Label text="My Tasks" textFill="#2c3e50">
@@ -33,26 +33,26 @@
     <center>
         <StackPane>
             <Pane fx:id="backgroundPane" />
-
-            <VBox spacing="20" alignment="TOP_CENTER">
+            <VBox alignment="TOP_CENTER" spacing="20">
                 <padding>
-                    <Insets top="30" right="50" bottom="30" left="50"/>
+                    <Insets bottom="30" left="50" right="50" top="30" />
                 </padding>
 
-                <TableView fx:id="tasksTable" VBox.vgrow="ALWAYS" style="-fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 2);">
+                <TableView fx:id="tasksTable" style="-fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 2);" VBox.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn fx:id="titleColumn" text="Task Title" prefWidth="200"/>
-                        <TableColumn fx:id="descColumn" text="Description" prefWidth="400"/>
-                        <TableColumn fx:id="deadlineColumn" text="Deadline" prefWidth="150"/>
+                        <TableColumn fx:id="titleColumn" prefWidth="250" text="Title" />
+                        <TableColumn fx:id="descColumn" prefWidth="450" text="Description" />
+                        <TableColumn fx:id="deadlineColumn" prefWidth="200" text="Deadline" />
                     </columns>
                     <columnResizePolicy>
-                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                     </columnResizePolicy>
                 </TableView>
 
-                <HBox spacing="15" alignment="CENTER_RIGHT">
-                    <Button text="Add New Task" styleClass="button-action" prefHeight="40" prefWidth="150"/>
-                    <Button text="Mark as Done" styleClass="button-action, button-green" prefHeight="40" prefWidth="150"/>
+                <HBox alignment="CENTER_RIGHT" spacing="15">
+                    <Button onAction="#onAddTaskClick" prefHeight="40" prefWidth="150" styleClass="button-action" text="Add New Task" />
+
+                    <Button onAction="#onMarkDoneClick" prefHeight="40" prefWidth="150" styleClass="button-action" text="Mark as Done" />
                 </HBox>
             </VBox>
         </StackPane>

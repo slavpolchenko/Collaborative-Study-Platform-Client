@@ -1,10 +1,6 @@
 package com.studyplatform.client.studyplatformclient.controller;
 
 import com.studyplatform.client.studyplatformclient.service.ApiClient;
-import javafx.animation.PauseTransition;
-import javafx.animation.ScaleTransition;
-import javafx.animation.SequentialTransition;
-import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -14,133 +10,27 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 import java.io.IOException;
 
 public class RegisterController {
 
     @FXML private StackPane rootPane;
-    @FXML private AnchorPane dinoHead;
     @FXML private TextField nameField;
     @FXML private TextField emailField;
     @FXML private PasswordField passwordField;
     @FXML private Label infoLabel;
     @FXML private Button registerButton;
 
-    @FXML private Circle leftPupil;
-    @FXML private Circle rightPupil;
-    @FXML private Circle leftEye;
-    @FXML private Circle rightEye;
-
-    private boolean isAngry = false;
-
     @FXML
     public void initialize() {
-        rootPane.setOnMouseMoved(this::moveEyes);
     }
 
     @FXML
     private void onEyeClicked(MouseEvent event) {
-        blink();
-    }
-
-    private void playWinkAnimation() {
-        leftPupil.setTranslateX(0); leftPupil.setTranslateY(0);
-        rightPupil.setTranslateX(0); rightPupil.setTranslateY(0);
-        leftEye.setFill(Color.LIMEGREEN);
-        rightEye.setFill(Color.LIMEGREEN);
-        animateSquint(leftEye);
-        animateSquint(rightEye);
-        PauseTransition pauseBeforeWink = new PauseTransition(Duration.millis(300));
-        pauseBeforeWink.setOnFinished(e -> animateWink(rightEye));
-        pauseBeforeWink.play();
-        PauseTransition resetPause = new PauseTransition(Duration.seconds(2.5));
-        resetPause.setOnFinished(e -> calmDown());
-        resetPause.play();
-    }
-
-    private void animateWink(Circle target) {
-        ScaleTransition close = new ScaleTransition(Duration.millis(150), target);
-        close.setToY(0.1);
-        ScaleTransition open = new ScaleTransition(Duration.millis(150), target);
-        open.setToY(0.6);
-        new SequentialTransition(close, open).play();
-    }
-
-    private void animateSquint(Circle target) {
-        ScaleTransition st = new ScaleTransition(Duration.millis(200), target);
-        st.setFromY(1.0);
-        st.setToY(0.6);
-        st.setCycleCount(1);
-        st.play();
-    }
-
-    private void blink() {
-        animateBlinkFull(leftEye);
-        animateBlinkFull(rightEye);
-        animateBlinkFull(leftPupil);
-        animateBlinkFull(rightPupil);
-    }
-
-    private void animateBlinkFull(Circle target) {
-        ScaleTransition st = new ScaleTransition(Duration.millis(100), target);
-        st.setFromY(1.0);
-        st.setToY(0.1);
-        st.setAutoReverse(true);
-        st.setCycleCount(2);
-        st.play();
-    }
-
-    private void becomeAngry() {
-        isAngry = true;
-        leftEye.setFill(Color.RED);
-        rightEye.setFill(Color.RED);
-        leftEye.setScaleY(1.0);
-        rightEye.setScaleY(1.0);
-        shakeHeadNo();
-        PauseTransition pause = new PauseTransition(Duration.seconds(2));
-        pause.setOnFinished(e -> calmDown());
-        pause.play();
-    }
-
-    private void shakeHeadNo() {
-        dinoHead.setTranslateX(0);
-        TranslateTransition tt = new TranslateTransition(Duration.millis(50), dinoHead);
-        tt.setFromX(0);
-        tt.setByX(10);
-        tt.setCycleCount(6);
-        tt.setAutoReverse(true);
-        tt.play();
-    }
-
-    private void calmDown() {
-        isAngry = false;
-        leftEye.setFill(Color.WHITE);
-        rightEye.setFill(Color.WHITE);
-        ScaleTransition openLeft = new ScaleTransition(Duration.millis(200), leftEye); openLeft.setToY(1.0); openLeft.play();
-        ScaleTransition openRight = new ScaleTransition(Duration.millis(200), rightEye); openRight.setToY(1.0); openRight.play();
-    }
-
-    private void moveEyes(MouseEvent event) {
-        double centerX = rootPane.getWidth() / 2;
-        double centerY = rootPane.getHeight() / 2 - 230;
-        updatePupil(leftPupil, event.getX(), event.getY(), centerX - 50, centerY);
-        updatePupil(rightPupil, event.getX(), event.getY(), centerX + 50, centerY);
-    }
-
-    private void updatePupil(Circle pupil, double mouseX, double mouseY, double eyeX, double eyeY) {
-        double deltaX = mouseX - eyeX;
-        double deltaY = mouseY - eyeY;
-        double angle = Math.atan2(deltaY, deltaX);
-        double distance = Math.min(Math.sqrt(deltaX * deltaX + deltaY * deltaY), 20);
-        pupil.setTranslateX(Math.cos(angle) * distance);
-        pupil.setTranslateY(Math.sin(angle) * distance);
     }
 
     @FXML
@@ -153,7 +43,6 @@ public class RegisterController {
             infoLabel.setText("Please fill in all fields!");
             infoLabel.setTextFill(Color.RED);
             infoLabel.setVisible(true);
-            becomeAngry();
             return;
         }
 
@@ -168,11 +57,9 @@ public class RegisterController {
             Platform.runLater(() -> {
                 registerButton.setDisable(false);
                 if (success) {
-                    playWinkAnimation();
                     infoLabel.setText("Success! Please login.");
                     infoLabel.setTextFill(Color.GREEN);
                 } else {
-                    becomeAngry();
                     infoLabel.setText("Account already exists or error!");
                     infoLabel.setTextFill(Color.RED);
                 }

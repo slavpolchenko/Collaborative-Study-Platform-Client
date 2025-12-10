@@ -17,9 +17,9 @@
 
     <top>
         <HBox alignment="CENTER_LEFT" spacing="20" styleClass="dashboard-header">
-            <Button styleClass="icon-button" onAction="#onBackClick">
+            <Button onAction="#onBackClick" styleClass="icon-button">
                 <graphic>
-                    <SVGPath content="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" fill="#555555" scaleX="1.5" scaleY="1.5"/>
+                    <SVGPath content="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" fill="#555555" scaleX="1.5" scaleY="1.5" />
                 </graphic>
             </Button>
             <Label text="My Groups" textFill="#2c3e50">
@@ -33,25 +33,26 @@
     <center>
         <StackPane>
             <Pane fx:id="backgroundPane" />
-            <VBox spacing="20" alignment="TOP_CENTER">
+            <VBox alignment="TOP_CENTER" spacing="20">
                 <padding>
-                    <Insets top="30" right="50" bottom="30" left="50"/>
+                    <Insets bottom="30" left="50" right="50" top="30" />
                 </padding>
 
-                <TableView fx:id="groupsTable" VBox.vgrow="ALWAYS" style="-fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 2);">
+                <TableView fx:id="groupsTable" style="-fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 2);" VBox.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn fx:id="idColumn" text="ID" prefWidth="50"/>
-                        <TableColumn fx:id="nameColumn" text="Group Name" prefWidth="250"/>
-                        <TableColumn fx:id="descColumn" text="Description" prefWidth="450"/>
+                        <TableColumn fx:id="idColumn" prefWidth="50" text="ID" />
+                        <TableColumn fx:id="nameColumn" prefWidth="250" text="Group Name" />
+                        <TableColumn fx:id="descColumn" prefWidth="450" text="Description" />
                     </columns>
                     <columnResizePolicy>
-                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                     </columnResizePolicy>
                 </TableView>
 
-                <HBox spacing="15" alignment="CENTER_RIGHT">
-                    <Button text="Create Group" styleClass="button-action" prefHeight="40" prefWidth="150"/>
-                    <Button text="Join Group" styleClass="button-action" prefHeight="40" prefWidth="150"/>
+                <HBox alignment="CENTER_RIGHT" spacing="15">
+                    <Button onAction="#onCreateGroupClick" prefHeight="40" prefWidth="150" styleClass="button-action" text="Create Group" />
+
+                    <Button onAction="#onJoinGroupClick" prefHeight="40" prefWidth="150" styleClass="button-action" text="Join Group" />
                 </HBox>
             </VBox>
         </StackPane>
